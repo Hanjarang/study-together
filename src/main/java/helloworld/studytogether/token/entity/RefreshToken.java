@@ -1,13 +1,6 @@
 package helloworld.studytogether.token.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import helloworld.studytogether.user.entity.User; // User 엔티티 import
@@ -15,7 +8,7 @@ import helloworld.studytogether.user.entity.User; // User 엔티티 import
 @Getter
 @Setter
 @Entity
-
+@Table(name = "refresh_token")
 public class RefreshToken {
 
   @Id

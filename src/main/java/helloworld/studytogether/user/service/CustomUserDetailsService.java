@@ -11,21 +11,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
- @Service
- public class CustomUserDetailsService implements UserDetailsService {
+@Service
+public class CustomUserDetailsService implements UserDetailsService {
 
-     @Autowired
-     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-     @Autowired
-     private final UserRepository userRepository;
+    @Autowired
+    private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
 
-    this.userRepository = userRepository;
- }
+        this.userRepository = userRepository;
+    }
 
-   @Override
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 
@@ -33,8 +33,7 @@ import org.springframework.stereotype.Service;
 
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을수없습니다." + username));
 
-       return new CustomUserDetails(user);
+        return new CustomUserDetails(user);
 
     }
 }
-

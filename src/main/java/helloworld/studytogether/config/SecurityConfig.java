@@ -2,6 +2,7 @@ package helloworld.studytogether.config;
 
 
 import helloworld.studytogether.jwt.filter.CustomLogoutFilter;
+import helloworld.studytogether.jwt.filter.JWTFilter;
 import helloworld.studytogether.jwt.util.JWTUtil;
 import helloworld.studytogether.jwt.filter.LoginFilter;
 import helloworld.studytogether.token.repository.RefreshTokenRepository;
@@ -30,7 +31,7 @@ public class SecurityConfig {
   private final UserRepository userRepository;
 
   public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,
-      RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
+                        RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
 
     this.authenticationConfiguration = authenticationConfiguration;
     this.jwtUtil = jwtUtil;
@@ -41,7 +42,7 @@ public class SecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)
-      throws Exception {
+          throws Exception {
 
     return configuration.getAuthenticationManager();
   }
@@ -55,32 +56,35 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http
-        .csrf((auth) -> auth.disable());
+            .csrf((auth) -> auth.disable());
 
     http
-        .formLogin((auth) -> auth.disable()); //
+            .formLogin((auth) -> auth.disable()); //
 
     http
-        .httpBasic((auth) -> auth.disable());
+            .httpBasic((auth) -> auth.disable());
 
     http
-        .authorizeHttpRequests((auth) -> auth
-            .requestMatchers("/","/logout","/login", "/join", "/reissue").permitAll()
-            //.requestMatchers("/admin/**").hasRole("ADMIN")
-            .anyRequest().authenticated());
+            .authorizeHttpRequests((auth) -> auth
+                    .requestMatchers("/","users/logout","/login", "users/join", "/reissue").permitAll()
+                    //.requestMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated());
 
     http
-        .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,
-                refreshTokenRepository, userRepository),
-            UsernamePasswordAuthenticationFilter.class);
+            .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,
+                            refreshTokenRepository, userRepository),
+                    UsernamePasswordAuthenticationFilter.class);
+    http
+            .addFilterBefore(new JWTFilter(userRepository, jwtUtil), // JWT 필터 추가
+                    UsernamePasswordAuthenticationFilter.class); // 이 필터 앞에서 실행
 
     //.addFilterAt(new LoginFilter(), UsernamePasswordAuthenticationFilter.class);
     http
-        .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository),
-            LogoutFilter.class);
+            .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository),
+                    LogoutFilter.class);
     http
-        .sessionManagement((session) -> session
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .sessionManagement((session) -> session
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
     return http.build();
   }
