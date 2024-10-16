@@ -65,10 +65,12 @@ public class SecurityConfig {
             .httpBasic((auth) -> auth.disable());
 
     http
-            .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/","users/logout","/login", "users/join", "/reissue").permitAll()
-                    //.requestMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().authenticated());
+
+        .authorizeHttpRequests((auth) -> auth
+            .requestMatchers("/","users/logout","/login", "users/join", "/reissue").permitAll()
+            //.requestMatchers("/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated());
+
 
     http
             .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil,
